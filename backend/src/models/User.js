@@ -1,0 +1,30 @@
+import connectDB from "../config/db.js";
+
+const createUserTable = async () => {
+  const db = await connectDB();
+  await db.exec(`CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    companyName TEXT,
+    email TEXT UNIQUE,
+    password TEXT
+  )`);
+  console.log("✅ Users table created or already exists");
+};
+
+const registerUser = async (companyName, email, password) => {
+  try {
+    const db = await connectDB();
+    await createUserTable(); // Ensure the table exists
+    await db.run(`INSERT INTO users (companyName, email, password) VALUES (?, ?, ?)`, [companyName, email, password]);
+  } catch (error) {
+    console.error("❌ Error in registerUser:", error);
+    throw error; // Re-throw the error to propagate it
+  }
+};
+
+const findUserByEmail = async (email) => {
+  const db = await connectDB();
+  return db.get(`SELECT * FROM users WHERE email = ?`, [email]);
+};
+
+export { createUserTable, registerUser, findUserByEmail };
