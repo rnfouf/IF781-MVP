@@ -45,13 +45,4 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.get("/test", (req, res) => {
-  res.json({ message: "Auth routes are working!" });
-});
-
-router.post("/test-post", (req, res) => {
-  res.json({ message: "POST request successful!" });
-});
-
-
 export default router;
