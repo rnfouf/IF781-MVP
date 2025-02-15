@@ -41,30 +41,56 @@ export default function Login() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <Card>
-        <CardContent>
-          <h2 className="text-xl font-bold mb-4">Login</h2>
-          <Input
+      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-md">
+        <h2 className="text-2xl font-semibold text-center mb-2">Sign in</h2>
+        <p className="text-gray-600 text-sm text-center mb-6">
+          Enter your details below to continue.
+        </p>
+
+        {/* Email Input */}
+        <div className="mb-4">
+          <input
             type="email"
             placeholder="Email"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-          <Input
+        </div>
+
+        {/* Password Input */}
+        <div className="mb-4">
+          <input
             type="password"
             placeholder="Password"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <div className="mt-4 flex gap-2">
-            <Button onClick={handleLogin}>Login</Button>
-            <Button variant="outline" onClick={() => navigate("/register")}>
-              Create an Account
-            </Button>
-          </div>
-          {error && <p className="text-red-500 mt-2">{error}</p>}
-        </CardContent>
-      </Card>
+        </div>
+
+        {/* Login Button */}
+        <button
+          onClick={handleLogin}
+          className="w-full bg-[#f4c752] hover:bg-yellow-500 text-black font-semibold py-3 rounded-lg transition"
+        >
+          Continue
+        </button>
+
+        {/* Error Message */}
+        {error && <p className="text-red-500 text-sm mt-3 text-center">{error}</p>}
+
+        {/* Sign Up Link */}
+        <p className="text-gray-600 text-sm text-center mt-6">
+          Don't have an account?{" "}
+          <span
+            onClick={() => navigate("/register")}
+            className="text-blue-600 hover:underline cursor-pointer"
+          >
+            Sign up
+          </span>
+        </p>
+      </div>
     </div>
   );
 }
