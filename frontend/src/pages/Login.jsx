@@ -1,15 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Input, Card, CardContent } from "@/components/ui";
+import { isAuthenticated } from "@/utils/auth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(""); // For incorrect credentials
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (isAuthenticated()) {
+      navigate("/"); // Redirect to home if already authenticated
+    }
+  }, [navigate]);
+
   const handleLogin = async () => {
-    setError(""); // Clear previous errors
+    setError("");
 
     try {
       const response = await fetch("http://localhost:5000/api/auth/login", {
@@ -25,8 +32,8 @@ export default function Login() {
         return;
       }
 
-      localStorage.setItem("token", data.token); // Store JWT
-      navigate("/"); // Redirect to Home page on success
+      localStorage.setItem("token", data.token);
+      navigate("/");
     } catch (error) {
       setError("Server error, try again later");
     }
@@ -51,7 +58,9 @@ export default function Login() {
           />
           <div className="mt-4 flex gap-2">
             <Button onClick={handleLogin}>Login</Button>
-            <Button variant="outline">Create an Account</Button>
+            <Button variant="outline" onClick={() => navigate("/register")}>
+              Create an Account
+            </Button>
           </div>
           {error && <p className="text-red-500 mt-2">{error}</p>}
         </CardContent>

@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { isAuthenticated } from "@/utils/auth";
 
 const Register = () => {
   const [companyName, setCompanyName] = useState("");
@@ -8,22 +9,28 @@ const Register = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (isAuthenticated()) {
+      navigate("/"); // Redirect to home if already authenticated
+    }
+  }, [navigate]);
+
   const handleRegister = async (e) => {
     e.preventDefault();
     setError("");
-    
+
     try {
       const response = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ companyName, email, password }),
       });
-      
+
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.message || "Registration failed");
       }
-      
+
       navigate("/login");
     } catch (err) {
       setError(err.message);
