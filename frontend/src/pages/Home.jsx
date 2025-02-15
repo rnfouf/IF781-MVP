@@ -8,13 +8,13 @@ export default function Home() {
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      navigate("/"); // Redirect to login if not authenticated
+      navigate("/login"); // Redirect to login if not authenticated
     }
   }, [navigate]);
 
   const handleLogout = () => {
     logout();
-    navigate("/"); // Redirect to login page
+    navigate("/login"); // Redirect to login page
   };
 
   return (

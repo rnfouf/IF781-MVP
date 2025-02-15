@@ -26,7 +26,7 @@ export default function Login() {
       }
 
       localStorage.setItem("token", data.token); // Store JWT
-      navigate("/home"); // Redirect to Home page on success
+      navigate("/"); // Redirect to Home page on success
     } catch (error) {
       setError("Server error, try again later");
     }
