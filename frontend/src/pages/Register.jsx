@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { isAuthenticated } from "@/utils/auth";
+import { Button, Input} from "@/components/ui";
 
 const Register = () => {
   const [companyName, setCompanyName] = useState("");
@@ -46,55 +47,41 @@ const Register = () => {
         </p>
 
         <form onSubmit={handleRegister}>
-          {/* Company Name Input */}
           <div className="mb-4">
-            <input
+            <Input
               type="text"
               placeholder="Company Name"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={companyName}
               onChange={(e) => setCompanyName(e.target.value)}
               required
             />
           </div>
 
-          {/* Email Input */}
           <div className="mb-4">
-            <input
+            <Input
               type="email"
               placeholder="Email"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
 
-          {/* Password Input */}
           <div className="mb-4">
-            <input
+            <Input
               type="password"
               placeholder="Password"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
 
-          {/* Register Button */}
-          <button
-            type="submit"
-            className="w-full bg-[#f4c752] hover:bg-yellow-500 text-black font-semibold py-3 rounded-lg transition"
-          >
-            Continue
-          </button>
+          <Button type="submit">Continue</Button>
         </form>
 
-        {/* Error Message */}
         {error && <p className="text-red-500 text-sm mt-3 text-center">{error}</p>}
 
-        {/* Already have an account? */}
         <p className="text-gray-600 text-sm text-center mt-6">
           Already have an account?{" "}
           <span
