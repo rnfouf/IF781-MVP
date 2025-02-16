@@ -1,13 +1,13 @@
-export default function Button({ children, onClick, variant = "default" }) {
-    return (
-      <button
-        onClick={onClick}
-        className={`p-2 rounded ${
-          variant === "outline" ? "border border-gray-500" : "bg-blue-500 text-white"
-        }`}
-      >
-        {children}
-      </button>
-    );
-  }
-  
+const Button = ({ children, onClick, type = "button", className = "" }) => {
+  return (
+    <button
+      type={type}
+      onClick={onClick}
+      className={`w-full bg-[#f4c752] hover:bg-yellow-500 text-black font-semibold py-3 rounded-lg transition ${className}`}
+    >
+      {children}
+    </button>
+  );
+};
+
+export default Button;
