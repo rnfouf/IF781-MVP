@@ -2,70 +2,74 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { isAuthenticated, logout } from "@/utils/auth";
 import { Button } from "@/components/ui";
+import JobForm from "@/components/JobForm"; // Import the JobForm component
+import Modal from "@/components/Modal"; // Import the Modal component
 
 export default function Home() {
   const navigate = useNavigate();
   const [company, setCompany] = useState(null);
-  const [jobs, setJobs] = useState([]); // State for jobs
+  const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false); // State to control the modal
 
+  // Fetch company details and jobs
   useEffect(() => {
     if (!isAuthenticated()) {
       navigate("/login");
       return;
     }
 
-    const fetchCompanyDetails = async () => {
-      try {
-        const token = localStorage.getItem("token");
-
-        const response = await fetch("http://localhost:5000/api/auth/company-details", {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        const textResponse = await response.text();
-
-        if (!response.ok) {
-          setError(`Error: ${response.status} ${response.statusText}`);
-          return;
-        }
-
-        const data = JSON.parse(textResponse);
-        setCompany(data);
-        fetchJobs(data.id); // Fetch jobs after getting company details
-      } catch (error) {
-        setError("Failed to load company details.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const fetchJobs = async (companyId) => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(`http://localhost:5000/api/jobs/${companyId}`, {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        const textResponse = await response.text();
-
-        if (!response.ok) {
-          setError(`Error: ${response.status} ${response.statusText}`);
-          return;
-        }
-
-        const data = JSON.parse(textResponse);
-        setJobs(data); // Set the jobs data
-      } catch (error) {
-        setError("Failed to load jobs.");
-      }
-    };
-
     fetchCompanyDetails();
   }, [navigate]);
+
+  const fetchCompanyDetails = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch("http://localhost:5000/api/auth/company-details", {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const textResponse = await response.text();
+
+      if (!response.ok) {
+        setError(`Error: ${response.status} ${response.statusText}`);
+        return;
+      }
+
+      const data = JSON.parse(textResponse);
+      setCompany(data);
+      fetchJobs(data.id); // Fetch jobs after getting company details
+    } catch (error) {
+      setError("Failed to load company details.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchJobs = async (companyId) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`http://localhost:5000/api/jobs/${companyId}`, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const textResponse = await response.text();
+
+      if (!response.ok) {
+        setError(`Error: ${response.status} ${response.statusText}`);
+        return;
+      }
+
+      const data = JSON.parse(textResponse);
+      setJobs(data); // Update the jobs state
+    } catch (error) {
+      setError("Failed to load jobs.");
+    }
+  };
 
   const handleLogout = () => {
     logout();
@@ -73,17 +77,19 @@ export default function Home() {
   };
 
   const handleAddJob = () => {
-    // Button functionality will be implemented later
-    console.log("Add new job button clicked");
+    setIsModalOpen(true); // Open the modal
+  };
+
+  const handleJobAdded = () => {
+    setIsModalOpen(false); // Close the modal
+    fetchJobs(company.id); // Refresh the job list
   };
 
   const handleViewStatistics = () => {
-    // Button functionality will be implemented later
     console.log("View statistics button clicked");
   };
 
   const handleJobClick = (jobId) => {
-    // Navigate to the job detail page (implementation will come later)
     console.log("Navigating to job detail page for job ID:", jobId);
   };
 
@@ -129,7 +135,7 @@ export default function Home() {
                   jobs.map((job) => (
                     <li key={job.id} className="bg-gray-50 p-4 rounded-lg shadow-sm">
                       <Button
-                        onClick={() => handleJobClick(job.id)} // Handle job click
+                        onClick={() => handleJobClick(job.id)}
                         className="w-full text-left text-lg font-semibold bg-white border-2 border-gray-300 hover:bg-gray-50 pl-4 pr-4"
                       >
                         {job.title}
@@ -152,6 +158,11 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* Modal for adding a new job */}
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <JobForm companyId={company.id} onJobAdded={handleJobAdded} onClose={() => setIsModalOpen(false)} />
+      </Modal>
     </div>
   );
 }
