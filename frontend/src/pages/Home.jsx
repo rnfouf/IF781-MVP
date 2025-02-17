@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { isAuthenticated, logout } from "@/utils/auth";
 import { Button } from "@/components/ui";
 import JobForm from "@/components/JobForm"; // Import the JobForm component
+import JobPreview from "@/components/JobPreview"; // Import the JobPreview component
 import Modal from "@/components/Modal"; // Import the Modal component
 
 export default function Home() {
@@ -11,7 +12,9 @@ export default function Home() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false); // State to control the modal
+  const [isModalOpen, setIsModalOpen] = useState(false); // State for Add Job modal
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false); // State for Job Preview modal
+  const [selectedJob, setSelectedJob] = useState(null); // State to store the selected job
 
   // Fetch company details and jobs
   useEffect(() => {
@@ -77,20 +80,26 @@ export default function Home() {
   };
 
   const handleAddJob = () => {
-    setIsModalOpen(true); // Open the modal
+    setIsModalOpen(true); // Open the Add Job modal
   };
 
   const handleJobAdded = () => {
-    setIsModalOpen(false); // Close the modal
+    setIsModalOpen(false); // Close the Add Job modal
+    fetchJobs(company.id); // Refresh the job list
+  };
+
+  const handleJobClick = (job) => {
+    setSelectedJob(job); // Set the selected job
+    setIsPreviewOpen(true); // Open the Job Preview modal
+  };
+
+  const handleJobDeleted = () => {
+    setIsPreviewOpen(false); // Close the Job Preview modal
     fetchJobs(company.id); // Refresh the job list
   };
 
   const handleViewStatistics = () => {
     console.log("View statistics button clicked");
-  };
-
-  const handleJobClick = (jobId) => {
-    console.log("Navigating to job detail page for job ID:", jobId);
   };
 
   if (loading) return <p className="text-xl">Loading...</p>;
@@ -135,7 +144,7 @@ export default function Home() {
                   jobs.map((job) => (
                     <li key={job.id} className="bg-gray-50 p-4 rounded-lg shadow-sm">
                       <Button
-                        onClick={() => handleJobClick(job.id)}
+                        onClick={() => handleJobClick(job)} // Pass the job object
                         className="w-full text-left text-lg font-semibold bg-white border-2 border-gray-300 hover:bg-gray-50 pl-4 pr-4"
                       >
                         {job.title}
@@ -162,6 +171,17 @@ export default function Home() {
       {/* Modal for adding a new job */}
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <JobForm companyId={company.id} onJobAdded={handleJobAdded} onClose={() => setIsModalOpen(false)} />
+      </Modal>
+
+      {/* Modal for job preview */}
+      <Modal isOpen={isPreviewOpen} onClose={() => setIsPreviewOpen(false)}>
+        {selectedJob && (
+          <JobPreview
+            job={selectedJob}
+            onDelete={handleJobDeleted}
+            onClose={() => setIsPreviewOpen(false)}
+          />
+        )}
       </Modal>
     </div>
   );
