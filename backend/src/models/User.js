@@ -27,4 +27,15 @@ const findUserByEmail = async (email) => {
   return db.get(`SELECT * FROM users WHERE email = ?`, [email]);
 };
 
-export { createUserTable, registerUser, findUserByEmail };
+const getCompanyDetailsById = async (userId) => {
+  const db = await connectDB();
+  return db.get(`SELECT id, companyName, email FROM users WHERE id = ?`, [userId]);
+};
+
+// New function to get company profile by ID (for public viewing)
+const getPublicCompanyProfile = async (companyId) => {
+  const db = await connectDB();
+  return db.get(`SELECT id, companyName FROM users WHERE id = ?`, [companyId]); // No email returned
+};
+
+export { createUserTable, registerUser, findUserByEmail, getCompanyDetailsById, getPublicCompanyProfile };
