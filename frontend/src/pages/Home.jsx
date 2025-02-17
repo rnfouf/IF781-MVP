@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { isAuthenticated, logout } from "@/utils/auth";
 import { Button } from "@/components/ui";
-import JobForm from "@/components/JobForm"; // Import the JobForm component
-import JobPreview from "@/components/JobPreview"; // Import the JobPreview component
-import Modal from "@/components/Modal"; // Import the Modal component
+import JobForm from "@/components/JobForm";
+import JobPreview from "@/components/JobPreview";
+import EditProfile from "@/components/EditProfile"; // Import the EditProfile component
+import Modal from "@/components/Modal";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -14,7 +15,8 @@ export default function Home() {
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false); // State for Add Job modal
   const [isPreviewOpen, setIsPreviewOpen] = useState(false); // State for Job Preview modal
-  const [selectedJob, setSelectedJob] = useState(null); // State to store the selected job
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false); // State for Edit Profile modal
+  const [selectedJob, setSelectedJob] = useState(null);
 
   // Fetch company details and jobs
   useEffect(() => {
@@ -44,7 +46,7 @@ export default function Home() {
 
       const data = JSON.parse(textResponse);
       setCompany(data);
-      fetchJobs(data.id); // Fetch jobs after getting company details
+      fetchJobs(data.id);
     } catch (error) {
       setError("Failed to load company details.");
     } finally {
@@ -68,7 +70,7 @@ export default function Home() {
       }
 
       const data = JSON.parse(textResponse);
-      setJobs(data); // Update the jobs state
+      setJobs(data);
     } catch (error) {
       setError("Failed to load jobs.");
     }
@@ -80,22 +82,31 @@ export default function Home() {
   };
 
   const handleAddJob = () => {
-    setIsModalOpen(true); // Open the Add Job modal
+    setIsModalOpen(true);
   };
 
   const handleJobAdded = () => {
-    setIsModalOpen(false); // Close the Add Job modal
-    fetchJobs(company.id); // Refresh the job list
+    setIsModalOpen(false);
+    fetchJobs(company.id);
   };
 
   const handleJobClick = (job) => {
-    setSelectedJob(job); // Set the selected job
-    setIsPreviewOpen(true); // Open the Job Preview modal
+    setSelectedJob(job);
+    setIsPreviewOpen(true);
   };
 
   const handleJobDeleted = () => {
-    setIsPreviewOpen(false); // Close the Job Preview modal
-    fetchJobs(company.id); // Refresh the job list
+    setIsPreviewOpen(false);
+    fetchJobs(company.id);
+  };
+
+  const handleEditProfile = () => {
+    setIsEditProfileOpen(true);
+  };
+
+  const handleProfileUpdated = () => {
+    setIsEditProfileOpen(false);
+    fetchCompanyDetails(); // Refresh the company details
   };
 
   const handleViewStatistics = () => {
@@ -120,7 +131,9 @@ export default function Home() {
               <p className="text-lg"><strong>Company ID:</strong> {company.id}</p>
 
               <div className="flex justify-center items-center mt-6 space-x-6">
-                <Button className="px-4 py-1 text-sm">Edit Profile</Button>
+                <Button onClick={handleEditProfile} className="px-4 py-1 text-sm">
+                  Edit Profile
+                </Button>
                 <span
                   className="text-red-600 cursor-pointer text-sm font-medium hover:underline"
                   onClick={handleLogout}
@@ -144,7 +157,7 @@ export default function Home() {
                   jobs.map((job) => (
                     <li key={job.id} className="bg-gray-50 p-4 rounded-lg shadow-sm">
                       <Button
-                        onClick={() => handleJobClick(job)} // Pass the job object
+                        onClick={() => handleJobClick(job)}
                         className="w-full text-left text-lg font-semibold bg-white border-2 border-gray-300 hover:bg-gray-50 pl-4 pr-4"
                       >
                         {job.title}
@@ -180,6 +193,17 @@ export default function Home() {
             job={selectedJob}
             onDelete={handleJobDeleted}
             onClose={() => setIsPreviewOpen(false)}
+          />
+        )}
+      </Modal>
+
+      {/* Modal for editing profile */}
+      <Modal isOpen={isEditProfileOpen} onClose={() => setIsEditProfileOpen(false)}>
+        {company && (
+          <EditProfile
+            company={company}
+            onUpdate={handleProfileUpdated}
+            onClose={() => setIsEditProfileOpen(false)}
           />
         )}
       </Modal>

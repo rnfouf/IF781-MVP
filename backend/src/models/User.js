@@ -38,4 +38,18 @@ const getPublicCompanyProfile = async (companyId) => {
   return db.get(`SELECT id, companyName FROM users WHERE id = ?`, [companyId]); // No email returned
 };
 
-export { createUserTable, registerUser, findUserByEmail, getCompanyDetailsById, getPublicCompanyProfile };
+const updateCompanyProfile = async (userId, companyName, email) => {
+  const db = await connectDB();
+  try {
+    await db.run(
+      `UPDATE users SET companyName = ?, email = ? WHERE id = ?`,
+      [companyName, email, userId]
+    );
+    console.log("✅ Profile updated successfully");
+  } catch (error) {
+    console.error("❌ Error updating profile:", error);
+    throw error; // Re-throw the error to propagate it
+  }
+};
+
+export { createUserTable, registerUser, findUserByEmail, getCompanyDetailsById, getPublicCompanyProfile, updateCompanyProfile };

@@ -1,7 +1,7 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { createUserTable, registerUser, findUserByEmail, getCompanyDetailsById, getPublicCompanyProfile } from "../models/User.js";
+import { createUserTable, registerUser, findUserByEmail, getCompanyDetailsById, getPublicCompanyProfile, updateCompanyProfile } from "../models/User.js";
 import dotenv from "dotenv";
 import authMiddleware from "../middleware/authMiddleware.js";
 
@@ -80,6 +80,21 @@ router.get("/company-profile/:id", async (req, res) => {
   } catch (error) {
     console.error("❌ Error fetching public company profile:", error);
     res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.put("/update-profile", authMiddleware, async (req, res) => {
+  const { companyName, email } = req.body;
+  const userId = req.user.userId;
+
+  console.log("Received update request:", { userId, companyName, email }); // Log the request data
+
+  try {
+    await updateCompanyProfile(userId, companyName, email);
+    res.json({ message: "Profile updated successfully" });
+  } catch (error) {
+    console.error("❌ Error updating profile:", error);
+    res.status(500).json({ message: "Server error", error: error.message }); // Include the error message in the response
   }
 });
 
