@@ -6,6 +6,7 @@ import { createUserTable } from "./models/User.js"; // Import createUserTable
 import { createJobTable } from "./models/Job.js"; // Import createJobTable
 import authRoutes from "./routes/auth.routes.js";
 import jobRoutes from "./routes/job.routes.js";
+import companyRoutes from "./routes/company.routes.js"; // Import company routes
 
 dotenv.config();
 
@@ -45,6 +46,9 @@ const startServer = async () => {
     } catch (error) {
       console.warn("Warning: jobRoutes not found or failed to load.");
     }
+
+    app.use("/api/companies", companyRoutes); // Register company routes
+    console.log("Company routes registered at /api/companies");
 
     const PORT = process.env.PORT || 5000;
     app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
