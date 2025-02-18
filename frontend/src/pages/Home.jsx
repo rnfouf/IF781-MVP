@@ -6,6 +6,7 @@ import JobForm from "@/components/JobForm";
 import JobPreview from "@/components/JobPreview";
 import EditProfile from "@/components/EditProfile"; // Import the EditProfile component
 import Modal from "@/components/Modal";
+import Header from "@/components/Header";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -118,95 +119,98 @@ export default function Home() {
   if (!company) return <p className="text-red-500 text-xl">Company details not found.</p>;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
-      <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-5xl flex space-x-8">
-        {/* Company Profile */}
-        <div className="flex-1">
-          <h1 className="text-4xl font-bold text-blue-600 text-center">{company.companyName}</h1>
-          <p className="text-lg text-gray-600 text-center">Company Profile</p>
-
-          {company.isOwner && (
-            <div className="mt-6 p-6 border rounded-lg bg-gray-50 shadow-sm">
-              <p className="text-lg"><strong>Email:</strong> {company.email}</p>
-              <p className="text-lg"><strong>Company ID:</strong> {company.id}</p>
-
-              <div className="flex justify-center items-center mt-6 space-x-6">
-                <Button onClick={handleEditProfile} className="px-4 py-1 text-sm">
-                  Edit Profile
-                </Button>
-                <span
-                  className="text-red-600 cursor-pointer text-sm font-medium hover:underline"
-                  onClick={handleLogout}
-                >
-                  Logout
-                </span>
+    <div className="relative">
+      <Header />
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
+        <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-5xl flex space-x-8">
+          {/* Company Profile */}
+          <div className="flex-1">
+            <h1 className="text-4xl font-bold text-blue-600 text-center">{company.companyName}</h1>
+            <p className="text-lg text-gray-600 text-center">Company Profile</p>
+  
+            {company.isOwner && (
+              <div className="mt-6 p-6 border rounded-lg bg-gray-50 shadow-sm">
+                <p className="text-lg"><strong>Email:</strong> {company.email}</p>
+                <p className="text-lg"><strong>Company ID:</strong> {company.id}</p>
+  
+                <div className="flex justify-center items-center mt-6 space-x-6">
+                  <Button onClick={handleEditProfile} className="px-4 py-1 text-sm">
+                    Edit Profile
+                  </Button>
+                  <span
+                    className="text-red-600 cursor-pointer text-sm font-medium hover:underline"
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+  
+          {/* Job Listings */}
+          <div className="flex-1 max-h-80 overflow-y-auto">
+            <div className="text-center">
+              <h2 className="text-2xl font-semibold">Job Listings</h2>
+              <div className="mt-4 max-h-80 overflow-y-auto">
+                <ul className="space-y-4">
+                  {jobs.length === 0 ? (
+                    <p className="text-lg text-center">No jobs available.</p>
+                  ) : (
+                    jobs.map((job) => (
+                      <li key={job.id} className="bg-gray-50 p-4 rounded-lg shadow-sm">
+                        <Button
+                          onClick={() => handleJobClick(job)}
+                          className="w-full text-left text-lg font-semibold bg-white border-2 border-gray-300 hover:bg-gray-50 pl-4 pr-4"
+                        >
+                          {job.title}
+                        </Button>
+                      </li>
+                    ))
+                  )}
+                </ul>
               </div>
             </div>
-          )}
-        </div>
-
-        {/* Job Listings */}
-        <div className="flex-1 max-h-80 overflow-y-auto">
-          <div className="text-center">
-            <h2 className="text-2xl font-semibold">Job Listings</h2>
-            <div className="mt-4 max-h-80 overflow-y-auto">
-              <ul className="space-y-4">
-                {jobs.length === 0 ? (
-                  <p className="text-lg text-center">No jobs available.</p>
-                ) : (
-                  jobs.map((job) => (
-                    <li key={job.id} className="bg-gray-50 p-4 rounded-lg shadow-sm">
-                      <Button
-                        onClick={() => handleJobClick(job)}
-                        className="w-full text-left text-lg font-semibold bg-white border-2 border-gray-300 hover:bg-gray-50 pl-4 pr-4"
-                      >
-                        {job.title}
-                      </Button>
-                    </li>
-                  ))
-                )}
-              </ul>
+  
+            {/* Buttons for adding job and viewing statistics */}
+            <div className="mt-8 text-center flex justify-center space-x-6">
+              <Button onClick={handleAddJob} className="px-4 py-2 bg-blue-600 text-white rounded-lg">
+                Add New Job
+              </Button>
+              <Button onClick={handleViewStatistics} className="px-4 py-2 bg-blue-600 text-white rounded-lg">
+                View Statistics
+              </Button>
             </div>
           </div>
-
-          {/* Buttons for adding job and viewing statistics */}
-          <div className="mt-8 text-center flex justify-center space-x-6">
-            <Button onClick={handleAddJob} className="px-4 py-2 bg-blue-600 text-white rounded-lg">
-              Add New Job
-            </Button>
-            <Button onClick={handleViewStatistics} className="px-4 py-2 bg-blue-600 text-white rounded-lg">
-              View Statistics
-            </Button>
-          </div>
         </div>
+  
+        {/* Modal for adding a new job */}
+        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+          <JobForm companyId={company.id} onJobAdded={handleJobAdded} onClose={() => setIsModalOpen(false)} />
+        </Modal>
+  
+        {/* Modal for job preview */}
+        <Modal isOpen={isPreviewOpen} onClose={() => setIsPreviewOpen(false)}>
+          {selectedJob && (
+            <JobPreview
+              job={selectedJob}
+              onDelete={handleJobDeleted}
+              onClose={() => setIsPreviewOpen(false)}
+            />
+          )}
+        </Modal>
+  
+        {/* Modal for editing profile */}
+        <Modal isOpen={isEditProfileOpen} onClose={() => setIsEditProfileOpen(false)}>
+          {company && (
+            <EditProfile
+              company={company}
+              onUpdate={handleProfileUpdated}
+              onClose={() => setIsEditProfileOpen(false)}
+            />
+          )}
+        </Modal>
       </div>
-
-      {/* Modal for adding a new job */}
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <JobForm companyId={company.id} onJobAdded={handleJobAdded} onClose={() => setIsModalOpen(false)} />
-      </Modal>
-
-      {/* Modal for job preview */}
-      <Modal isOpen={isPreviewOpen} onClose={() => setIsPreviewOpen(false)}>
-        {selectedJob && (
-          <JobPreview
-            job={selectedJob}
-            onDelete={handleJobDeleted}
-            onClose={() => setIsPreviewOpen(false)}
-          />
-        )}
-      </Modal>
-
-      {/* Modal for editing profile */}
-      <Modal isOpen={isEditProfileOpen} onClose={() => setIsEditProfileOpen(false)}>
-        {company && (
-          <EditProfile
-            company={company}
-            onUpdate={handleProfileUpdated}
-            onClose={() => setIsEditProfileOpen(false)}
-          />
-        )}
-      </Modal>
     </div>
-  );
+  );  
 }
