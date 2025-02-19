@@ -7,15 +7,24 @@ const createUserTable = async () => {
     companyName TEXT,
     email TEXT UNIQUE,
     password TEXT
+    industry TEXT,
+    founded INT,
+    headquarters TEXT,
+    size INT,
+    specialization TEXT,
+    perks TEXT,
+    description TEXT,
   )`);
   console.log("✅ Users table created or already exists");
 };
 
-const registerUser = async (companyName, email, password) => {
+const TABLE_COLUMNS = ["companyName", "email", "password", "industry", "founded", "headquarters", "size", "specialization", "perks", "description"]
+
+const registerUser = async ({companyName, email, password, industry, founded, headquarters, size, specialization, perks, description}) => {
   try {
     const db = await connectDB();
     await createUserTable(); // Ensure the table exists
-    await db.run(`INSERT INTO users (companyName, email, password) VALUES (?, ?, ?)`, [companyName, email, password]);
+    await db.run(`INSERT INTO users (${TABLE_COLUMNS.join(",")}) VALUES (${TABLE_COLUMNS.map(v => "?").join(",")})`, [companyName, email, password, industry, founded, headquarters, size, specialization, perks, description]);
   } catch (error) {
     console.error("❌ Error in registerUser:", error);
     throw error; // Re-throw the error to propagate it
@@ -52,4 +61,4 @@ const updateCompanyProfile = async (userId, companyName, email) => {
   }
 };
 
-export { createUserTable, registerUser, findUserByEmail, getCompanyDetailsById, getPublicCompanyProfile, updateCompanyProfile };
+export { createUserTable, registerUser, findUserByEmail, getCompanyDetailsById, getPublicCompanyProfile, updateCompanyProfile, TABLE_COLUMNS };

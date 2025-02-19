@@ -11,16 +11,17 @@ dotenv.config();
 const router = express.Router();
 
 router.post("/register", async (req, res) => {
-  const { companyName, email, password } = req.body;
-
-  console.log("Received registration request:", { companyName, email, password });
+  console.log("Received registration request:", req.body);
 
   try {
     const existingUser = await findUserByEmail(email);
     if (existingUser) return res.status(400).json({ message: "Email already in use" });
 
+    const data = {...req.body}
     const hashedPassword = await bcrypt.hash(password, 10);
-    await registerUser(companyName, email, hashedPassword);
+    data["password"] = hashedPassword
+
+    await registerUser(data);
 
     res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
