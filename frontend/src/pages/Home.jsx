@@ -125,9 +125,20 @@ export default function Home() {
         <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-5xl flex space-x-8">
           {/* Company Profile */}
           <div className="flex-1">
-            <h1 className="text-4xl font-bold text-blue-600 text-center">{company.companyName}</h1>
-            <p className="text-lg text-gray-600 text-center">Company Profile</p>
-  
+            <div className="flex items-center">
+              {/* Image on the left */}
+              <img 
+                src="https://www.svgrepo.com/show/13656/user.svg"
+                className="h-20 w-20 mr-4"
+                alt="Company logo"
+              />
+              
+              {/* Centered content area */}
+              <div className="flex-1">
+                <h1 className="text-4xl font-bold text-blue-600">{company.companyName}</h1>
+                <p className="text-lg text-gray-600">Company Profile</p>
+              </div>
+            </div>
             {company.isOwner && (
               <div className="mt-6 p-6 border rounded-lg bg-gray-50 shadow-sm">
                 <p className="text-lg"><strong>Email:</strong> {company.email}</p>
@@ -137,12 +148,12 @@ export default function Home() {
                   <Button onClick={handleEditProfile} className="px-4 py-1 text-sm">
                     Edit Profile
                   </Button>
-                  <span
+                  {/* <span
                     className="text-red-600 cursor-pointer text-sm font-medium hover:underline"
                     onClick={handleLogout}
                   >
                     Logout
-                  </span>
+                  </span> */}
                 </div>
               </div>
             )}
