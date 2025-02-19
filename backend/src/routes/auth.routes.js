@@ -1,7 +1,7 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { createUserTable, registerUser, findUserByEmail, getCompanyDetailsById, getPublicCompanyProfile, updateCompanyProfile } from "../models/User.js";
+import { registerUser, findUserByEmail, getCompanyDetailsById, getPublicCompanyProfile, updateCompanyProfile, getAll } from "../models/User.js";
 import dotenv from "dotenv";
 import authMiddleware from "../middleware/authMiddleware.js";
 
@@ -14,11 +14,11 @@ router.post("/register", async (req, res) => {
   console.log("Received registration request:", req.body);
 
   try {
-    const existingUser = await findUserByEmail(email);
+    const existingUser = await findUserByEmail(req.body.email);
     if (existingUser) return res.status(400).json({ message: "Email already in use" });
 
     const data = {...req.body}
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
     data["password"] = hashedPassword
 
     await registerUser(data);
@@ -43,6 +43,16 @@ router.post("/login", async (req, res) => {
     const token = jwt.sign({ userId: user.id, companyName: user.companyName }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
     res.json({ token });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+});
+
+//TODO - remove, debug only
+router.get("/all", async (req, res) => {
+  try {
+    const all = await getAll();
+    res.json(all)
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
   }

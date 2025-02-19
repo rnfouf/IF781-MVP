@@ -6,14 +6,14 @@ const createUserTable = async () => {
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     companyName TEXT,
     email TEXT UNIQUE,
-    password TEXT
+    password TEXT,
     industry TEXT,
     founded INT,
     headquarters TEXT,
     size INT,
     specialization TEXT,
     perks TEXT,
-    description TEXT,
+    description TEXT
   )`);
   console.log("✅ Users table created or already exists");
 };
@@ -31,6 +31,11 @@ const registerUser = async ({companyName, email, password, industry, founded, he
   }
 };
 
+const getAll = async () => {
+  const db = await connectDB();
+  return db.all(`SELECT * FROM users`);
+};
+
 const findUserByEmail = async (email) => {
   const db = await connectDB();
   return db.get(`SELECT * FROM users WHERE email = ?`, [email]);
@@ -44,7 +49,7 @@ const getCompanyDetailsById = async (userId) => {
 // New function to get company profile by ID (for public viewing)
 const getPublicCompanyProfile = async (companyId) => {
   const db = await connectDB();
-  return db.get(`SELECT id, companyName FROM users WHERE id = ?`, [companyId]); // No email returned
+  return db.get(`SELECT id, companyName, email, industry, founded, headquarters, size, specialization, perks, description FROM users WHERE id = ?`, [companyId]); // No email returned
 };
 
 const updateCompanyProfile = async (userId, {companyName, email, industry, founded, headquarters, size, specialization, perks, description}) => {
@@ -61,4 +66,4 @@ const updateCompanyProfile = async (userId, {companyName, email, industry, found
   }
 };
 
-export { createUserTable, registerUser, findUserByEmail, getCompanyDetailsById, getPublicCompanyProfile, updateCompanyProfile, TABLE_COLUMNS };
+export { createUserTable, registerUser, findUserByEmail, getCompanyDetailsById, getPublicCompanyProfile, updateCompanyProfile, TABLE_COLUMNS, getAll};

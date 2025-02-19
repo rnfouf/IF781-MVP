@@ -6,7 +6,7 @@
     "industry": "Software Development",
     "founded": 2015,
     "headquarters": "San Francisco, CA",
-    "company_size": "500+ employees",
+    "size": "500+ employees",
     "specialization": "AI, Cloud Computing, Cybersecurity",
     "perks": "Remote work, Stock options, Learning stipends",
     "description": "A leader in cutting-edge software development, TechNova Solutions specializes in AI, cloud computing, and cybersecurity. With a passion for innovation, the company fosters a collaborative work environment and offers remote flexibility for tech enthusiasts."
@@ -18,7 +18,7 @@
     "industry": "Renewable Energy",
     "founded": 2010,
     "headquarters": "Denver, CO",
-    "company_size": "1,200 employees",
+    "size": "1,200 employees",
     "specialization": "Solar Energy, Wind Energy Solutions",
     "perks": "Eco-friendly office, Wellness programs, Relocation assistance",
     "description": "Driving the future of renewable energy, Green Future Energy develops sustainable solar and wind power solutions. The company is committed to reducing carbon footprints and promoting a greener planet through advanced energy technologies."
@@ -30,7 +30,7 @@
     "industry": "Healthcare Technology",
     "founded": 2008,
     "headquarters": "Boston, MA",
-    "company_size": "900 employees",
+    "size": "900 employees",
     "specialization": "Telemedicine, AI-driven Diagnostics",
     "perks": "Medical insurance, R&D grants, Flexible hours",
     "description": "Transforming healthcare through technology, MediTech Innovations creates AI-driven diagnostic tools and telemedicine solutions. Their mission is to make healthcare more accessible and efficient worldwide."
@@ -42,7 +42,7 @@
     "industry": "Online Retail",
     "founded": 2017,
     "headquarters": "Seattle, WA",
-    "company_size": "300 employees",
+    "size": "300 employees",
     "specialization": "AI-driven Shopping Experiences",
     "perks": "Employee discounts, Hybrid work, Profit-sharing",
     "description": "Revolutionizing online retail, Stellar E-Commerce leverages AI and data analytics to create seamless shopping experiences. Their platform optimizes customer engagement and drives business growth for brands of all sizes."
@@ -54,7 +54,7 @@
     "industry": "Cybersecurity",
     "founded": 2012,
     "headquarters": "New York, NY",
-    "company_size": "750 employees",
+    "size": "750 employees",
     "specialization": "Enterprise Security Solutions",
     "perks": "Certifications paid, Gym memberships, Team retreats",
     "description": "Protecting businesses from digital threats, ByteShield Cybersecurity offers enterprise-level security solutions. Their team of experts develops cutting-edge tools to safeguard sensitive data and prevent cyber attacks."
@@ -66,7 +66,7 @@
     "industry": "Robotics & Automation",
     "founded": 2013,
     "headquarters": "Austin, TX",
-    "company_size": "600 employees",
+    "size": "600 employees",
     "specialization": "Autonomous Vehicles, Industrial Automation",
     "perks": "R&D opportunities, Stock options, On-site daycare",
     "description": "A pioneer in robotics and automation, AutoGen Robotics designs and develops autonomous vehicles and industrial automation systems. Their innovations improve efficiency, safety, and productivity across various industries."
@@ -78,7 +78,7 @@
     "industry": "FinTech",
     "founded": 2016,
     "headquarters": "Chicago, IL",
-    "company_size": "400 employees",
+    "size": "400 employees",
     "specialization": "AI-powered Financial Planning",
     "perks": "Performance bonuses, Remote-first culture, Mentorship programs",
     "description": "Empowering individuals and businesses with AI-driven financial solutions, FinWise Capital specializes in smart investment strategies and automated wealth management. Their platform makes financial planning simple and accessible."
@@ -90,7 +90,7 @@
     "industry": "Aerospace & Defense",
     "founded": 2005,
     "headquarters": "Los Angeles, CA",
-    "company_size": "1,500+ employees",
+    "size": "1,500+ employees",
     "specialization": "Commercial Aerospace Engineering, Defense Systems",
     "perks": "Travel discounts, Relocation support, Cutting-edge projects",
     "description": "Pushing the boundaries of aerospace engineering, AeroNext Aviation designs state-of-the-art aircraft and defense systems. Their commitment to innovation and safety makes them a key player in the aviation industry."
@@ -102,7 +102,7 @@
     "industry": "Food Science & Technology",
     "founded": 2014,
     "headquarters": "Portland, OR",
-    "company_size": "550 employees",
+    "size": "550 employees",
     "specialization": "Plant-based Food Research, Lab-grown Food",
     "perks": "Free meals, Wellness incentives, Research funding",
     "description": "Redefining the future of food, FoodTech Labs focuses on plant-based and lab-grown food research. Their mission is to create sustainable, nutritious, and environmentally friendly food solutions for global consumption."
@@ -114,7 +114,7 @@
     "industry": "Video Game Development",
     "founded": 2011,
     "headquarters": "Montreal, Canada",
-    "company_size": "800 employees",
+    "size": "800 employees",
     "specialization": "Open-world RPG, VR Gaming",
     "perks": "Free games, Creative hackathons, Flexible schedules",
     "description": "Bringing immersive gaming experiences to life, GameWave Studios develops open-world RPGs and VR-based adventures. Their team of creative minds crafts engaging stories and cutting-edge gameplay."
