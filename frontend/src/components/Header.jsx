@@ -33,7 +33,7 @@ export default function Header() {
           onKeyDown={handleSearch}
           className="w-full text-lg px-4 py-3 border border-gray-300 rounded-lg"
         />
-        <Button onClick={handleSearch} className="px-4 py-2 text-sm">Search</Button>
+        <Button onClick={handleSearch} className="!w-1/2">Search</Button>
         <span className="text-red-600 cursor-pointer text-sm font-medium hover:underline" onClick={handleLogout}>
           Logout
         </span>
