@@ -1,8 +1,10 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Login from "@/pages/Login";
 import Home from "@/pages/Home";
+import Login from "@/pages/Login";
 import Register from "@/pages/Register";
+import SearchResults from "@/pages/SearchResults"; // Import SearchResults
 import ProtectedRoute from "./ProtectedRoute";
+import CompanyDetails from "@/pages/CompanyDetails";
 
 export default function AppRouter() {
   return (
@@ -15,6 +17,22 @@ export default function AppRouter() {
           element={
             <ProtectedRoute>
               <Home />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/search-results"
+          element={
+            <ProtectedRoute>
+              <SearchResults />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/company/:companyId"
+          element={
+            <ProtectedRoute>
+              <CompanyDetails />
             </ProtectedRoute>
           }
         />
