@@ -18,7 +18,7 @@ export default function JobForm({ companyId, onJobAdded, onClose }) {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/api/jobs", {
+      const response = await fetch("http://localhost:8080/api/jobs", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

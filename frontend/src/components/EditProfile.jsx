@@ -19,7 +19,7 @@ export default function EditProfile({ company, onUpdate, onClose }) {
       const payload = { companyName, email };
       console.log("Sending update request:", payload); // Log the payload
   
-      const response = await fetch("http://localhost:5000/api/auth/update-profile", {
+      const response = await fetch("http://localhost:8080/api/auth/update-profile", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
