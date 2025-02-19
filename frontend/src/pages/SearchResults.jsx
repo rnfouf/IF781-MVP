@@ -51,11 +51,12 @@ export default function SearchResults() {
       <Header />
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
         <h1 className="text-3xl font-bold text-blue-600 mb-6">Search Results</h1>
-
-        {loading && <p className="text-xl">Loading...</p>}
-        {error && <p className="text-red-500 text-xl">{error}</p>}
-        {!loading && companies.length === 0 && <p className="text-xl">No companies found.</p>}
-
+        
+        <div className="w-full max-w-3xl text-center">
+          {loading && <p className="text-xl">Loading...</p>}
+          {error && <p className="text-red-500 text-xl">{error}</p>}
+          {!loading && companies.length === 0 && <p className="text-xl bg-white p-4 rounded-lg shadow-md mb-4">No companies found.</p>}
+        </div>
         <div className="w-full max-w-3xl">
           {companies.map((company) => (
             <div
@@ -66,9 +67,8 @@ export default function SearchResults() {
               <h2 className="text-xl font-semibold">{company.companyName}</h2>
             </div>
           ))}
+          <Button onClick={() => navigate("/")}>Back to Home</Button>
         </div>
-
-        <Button onClick={() => navigate("/")}>Back to Home</Button>
       </div>
     </div>
   );
