@@ -2,30 +2,25 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { isAuthenticated, logout } from "@/utils/auth";
 import { Button } from "@/components/ui";
-import JobForm from "@/components/JobForm";
-import JobPreview from "@/components/JobPreview";
-import EditProfile from "@/components/EditProfile"; // Import the EditProfile component
+import JobPreviewUser from "@/components/JobPreviewUser";
 import Modal from "@/components/Modal";
 import Header from "@/components/Header";
 
-export default function Home() {
+export default function CompanyDetails() {
   const navigate = useNavigate();
   const [company, setCompany] = useState(null);
-  const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false); // State for Add Job modal
+  const [jobs, setJobs] = useState([]);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false); // State for Job Preview modal
-  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false); // State for Edit Profile modal
   const [selectedJob, setSelectedJob] = useState(null);
 
-  // Fetch company details and jobs
+  // Fetch company details on component mount
   useEffect(() => {
     if (!isAuthenticated()) {
       navigate("/login");
       return;
     }
-
     fetchCompanyDetails();
   }, [navigate]);
 
@@ -39,7 +34,6 @@ export default function Home() {
       });
 
       const textResponse = await response.text();
-
       if (!response.ok) {
         setError(`Error: ${response.status} ${response.statusText}`);
         return;
@@ -77,41 +71,9 @@ export default function Home() {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
-
-  const handleAddJob = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleJobAdded = () => {
-    setIsModalOpen(false);
-    fetchJobs(company.id);
-  };
-
   const handleJobClick = (job) => {
     setSelectedJob(job);
     setIsPreviewOpen(true);
-  };
-
-  const handleJobDeleted = () => {
-    setIsPreviewOpen(false);
-    fetchJobs(company.id);
-  };
-
-  const handleEditProfile = () => {
-    setIsEditProfileOpen(true);
-  };
-
-  const handleProfileUpdated = () => {
-    setIsEditProfileOpen(false);
-    fetchCompanyDetails(); // Refresh the company details
-  };
-
-  const handleViewStatistics = () => {
-    console.log("View statistics button clicked");
   };
 
   if (loading) return <p className="text-xl">Loading...</p>;
@@ -126,39 +88,27 @@ export default function Home() {
           {/* Company Profile */}
           <div className="flex-1">
             <div className="flex items-center">
-              {/* Image on the left */}
+              {/* Company Logo */}
               <img 
                 src="https://www.svgrepo.com/show/13656/user.svg"
                 className="h-20 w-20 mr-4"
                 alt="Company logo"
               />
-              
-              {/* Centered content area */}
+              {/* Company Details */}
               <div className="flex-1">
                 <h1 className="text-4xl font-bold text-blue-600">{company.companyName}</h1>
                 <p className="text-lg text-gray-600">Company Profile</p>
               </div>
             </div>
+
             {company.isOwner && (
               <div className="mt-6 p-6 border rounded-lg bg-gray-50 shadow-sm">
                 <p className="text-lg"><strong>Email:</strong> {company.email}</p>
                 <p className="text-lg"><strong>Company ID:</strong> {company.id}</p>
-  
-                <div className="flex justify-center items-center mt-6 space-x-6">
-                  <Button onClick={handleEditProfile} className="px-4 py-1 text-sm">
-                    Edit Profile
-                  </Button>
-                  {/* <span
-                    className="text-red-600 cursor-pointer text-sm font-medium hover:underline"
-                    onClick={handleLogout}
-                  >
-                    Logout
-                  </span> */}
-                </div>
               </div>
             )}
           </div>
-  
+
           {/* Job Listings */}
           <div className="flex-1 max-h-80 overflow-y-auto">
             <div className="text-center">
@@ -182,46 +132,19 @@ export default function Home() {
                 </ul>
               </div>
             </div>
-  
-            {/* Buttons for adding job and viewing statistics */}
-            <div className="mt-8 text-center flex justify-center space-x-6">
-              <Button onClick={handleAddJob} className="px-4 py-2 bg-blue-600 text-white rounded-lg">
-                Add New Job
-              </Button>
-              <Button onClick={handleViewStatistics} className="px-4 py-2 bg-blue-600 text-white rounded-lg">
-                View Statistics
-              </Button>
-            </div>
           </div>
         </div>
-  
-        {/* Modal for adding a new job */}
-        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-          <JobForm companyId={company.id} onJobAdded={handleJobAdded} onClose={() => setIsModalOpen(false)} />
-        </Modal>
-  
+
         {/* Modal for job preview */}
         <Modal isOpen={isPreviewOpen} onClose={() => setIsPreviewOpen(false)}>
           {selectedJob && (
-            <JobPreview
+            <JobPreviewUser
               job={selectedJob}
-              onDelete={handleJobDeleted}
               onClose={() => setIsPreviewOpen(false)}
-            />
-          )}
-        </Modal>
-  
-        {/* Modal for editing profile */}
-        <Modal isOpen={isEditProfileOpen} onClose={() => setIsEditProfileOpen(false)}>
-          {company && (
-            <EditProfile
-              company={company}
-              onUpdate={handleProfileUpdated}
-              onClose={() => setIsEditProfileOpen(false)}
             />
           )}
         </Modal>
       </div>
     </div>
-  );  
+  );
 }
