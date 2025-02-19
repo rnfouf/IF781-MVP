@@ -60,6 +60,13 @@ router.get("/company-details", authMiddleware, async (req, res) => {
       id: companyDetails.id,
       companyName: companyDetails.companyName,
       email: companyDetails.email, // Only visible to the owner
+      industry: companyDetails.industry,
+      founded: companyDetails.founded,
+      headquarters: companyDetails.headquarters,
+      size: companyDetails.size,
+      specialization: companyDetails.specialization,
+      perks: companyDetails.perks,
+      description: companyDetails.description,
       isOwner: true // Flag for the frontend
     });
   } catch (error) {
@@ -91,7 +98,7 @@ router.put("/update-profile", authMiddleware, async (req, res) => {
   console.log("Received update request:", { userId, companyName, email }); // Log the request data
 
   try {
-    await updateCompanyProfile(userId, companyName, email);
+    await updateCompanyProfile(userId, req.body);
     res.json({ message: "Profile updated successfully" });
   } catch (error) {
     console.error("❌ Error updating profile:", error);

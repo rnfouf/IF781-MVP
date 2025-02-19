@@ -38,7 +38,7 @@ const findUserByEmail = async (email) => {
 
 const getCompanyDetailsById = async (userId) => {
   const db = await connectDB();
-  return db.get(`SELECT id, companyName, email FROM users WHERE id = ?`, [userId]);
+  return db.get(`SELECT id, companyName, email, industry, founded, headquarters, size, specialization, perks, description FROM users WHERE id = ?`, [userId]);
 };
 
 // New function to get company profile by ID (for public viewing)
@@ -47,12 +47,12 @@ const getPublicCompanyProfile = async (companyId) => {
   return db.get(`SELECT id, companyName FROM users WHERE id = ?`, [companyId]); // No email returned
 };
 
-const updateCompanyProfile = async (userId, companyName, email) => {
+const updateCompanyProfile = async (userId, {companyName, email, industry, founded, headquarters, size, specialization, perks, description}) => {
   const db = await connectDB();
   try {
     await db.run(
-      `UPDATE users SET companyName = ?, email = ? WHERE id = ?`,
-      [companyName, email, userId]
+      `UPDATE users SET companyName = ?, email = ?, industry = ?, founded = ?, headquarters = ?, size = ?, specialization = ?, perks = ?, description = ? WHERE id = ?`,
+      [companyName, email, industry, founded, headquarters, size, specialization, perks, description, userId]
     );
     console.log("✅ Profile updated successfully");
   } catch (error) {
