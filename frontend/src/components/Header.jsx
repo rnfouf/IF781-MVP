@@ -22,7 +22,7 @@ export default function Header() {
 
   return (
     <header className="fixed top-0 left-0 w-full bg-white shadow-md p-4 flex items-center justify-between">
-      <div className="ml-4 text-xl font-bold text-gray-800 cursor-pointer" onClick={() => navigate("/")}>PCDFinder</div>
+      <div className="ml-4 text-xl font-bold text-gray-800 cursor-pointer" onClick={() => navigate("/")}>Occasio</div>
 
       <div className="flex items-center space-x-2 mr-4 w-1/3"> 
         <Input
