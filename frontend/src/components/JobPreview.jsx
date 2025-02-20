@@ -4,7 +4,7 @@ export default function JobPreview({ job, onDelete, onClose }) {
   const handleDelete = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:5000/api/jobs/job/${job.id}`, {
+      const response = await fetch(`http://localhost:8080/api/jobs/job/${job.id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });

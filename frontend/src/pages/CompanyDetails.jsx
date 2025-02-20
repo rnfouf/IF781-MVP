@@ -28,10 +28,13 @@ export default function CompanyDetails() {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await fetch("http://localhost:5000/api/auth/company-details", {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await fetch(
+        "http://localhost:8080/api/auth/company-details",
+        {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       const textResponse = await response.text();
       if (!response.ok) {
@@ -43,6 +46,7 @@ export default function CompanyDetails() {
       setCompany(data);
       fetchJobs(data.id);
     } catch (error) {
+      console.error(error);
       setError("Failed to load company details.");
     } finally {
       setLoading(false);
@@ -52,10 +56,13 @@ export default function CompanyDetails() {
   const fetchJobs = async (companyId) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:5000/api/jobs/${companyId}`, {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await fetch(
+        `http://localhost:8080/api/jobs/${companyId}`,
+        {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       const textResponse = await response.text();
 
@@ -78,7 +85,8 @@ export default function CompanyDetails() {
 
   if (loading) return <p className="text-xl">Loading...</p>;
   if (error) return <p className="text-red-500 text-xl">{error}</p>;
-  if (!company) return <p className="text-red-500 text-xl">Company details not found.</p>;
+  if (!company)
+    return <p className="text-red-500 text-xl">Company details not found.</p>;
 
   return (
     <div className="relative">
@@ -89,24 +97,36 @@ export default function CompanyDetails() {
           <div className="flex-1">
             <div className="flex items-center">
               {/* Company Logo */}
-              <img 
+              <img
                 src="https://www.svgrepo.com/show/13656/user.svg"
                 className="h-20 w-20 mr-4"
                 alt="Company logo"
               />
               {/* Company Details */}
               <div className="flex-1">
-                <h1 className="text-4xl font-bold text-blue-600">{company.companyName}</h1>
+                <h1 className="text-4xl font-bold text-blue-600">
+                  {company.companyName}
+                </h1>
                 <p className="text-lg text-gray-600">Company Profile</p>
               </div>
             </div>
 
-            {company.isOwner && (
-              <div className="mt-6 p-6 border rounded-lg bg-gray-50 shadow-sm">
-                <p className="text-lg"><strong>Email:</strong> {company.email}</p>
-                <p className="text-lg"><strong>Company ID:</strong> {company.id}</p>
-              </div>
-            )}
+            {/* Extra details */}
+            <div className="mt-2 p-2">
+              <p className="text-sm">{company.description}</p>
+            </div>
+            <div className="mt-6 p-6 border rounded-lg bg-gray-50 shadow-sm">
+              <p className="text-lg">
+                <strong>Specialities:</strong> {company.specialization}
+              </p>
+              <p className="text-lg">
+                <strong>Perks:</strong> {company.perks}
+              </p>
+
+              <p className="text-lg">
+                <strong>Contact info:</strong> {company.email}
+              </p>
+            </div>
           </div>
 
           {/* Job Listings */}
@@ -119,12 +139,15 @@ export default function CompanyDetails() {
                     <p className="text-lg text-center">No jobs available.</p>
                   ) : (
                     jobs.map((job) => (
-                      <li key={job.id} className="bg-gray-50 p-4 rounded-lg shadow-sm">
+                      <li
+                        key={job.id}
+                        className="bg-gray-50 p-4 rounded-lg shadow-sm"
+                      >
                         <Button
                           onClick={() => handleJobClick(job)}
                           className="w-full text-left text-lg font-semibold bg-white border-2 border-gray-300 hover:bg-gray-50 pl-4 pr-4"
                         >
-                          {job.title}
+                          {job.title} - {job.salary}
                         </Button>
                       </li>
                     ))

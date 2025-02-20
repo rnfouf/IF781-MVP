@@ -6,20 +6,34 @@ const createUserTable = async () => {
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     companyName TEXT,
     email TEXT UNIQUE,
-    password TEXT
+    password TEXT,
+    industry TEXT,
+    founded INT,
+    headquarters TEXT,
+    size INT,
+    specialization TEXT,
+    perks TEXT,
+    description TEXT
   )`);
   console.log("✅ Users table created or already exists");
 };
 
-const registerUser = async (companyName, email, password) => {
+const TABLE_COLUMNS = ["companyName", "email", "password", "industry", "founded", "headquarters", "size", "specialization", "perks", "description"]
+
+const registerUser = async ({companyName, email, password, industry, founded, headquarters, size, specialization, perks, description}) => {
   try {
     const db = await connectDB();
     await createUserTable(); // Ensure the table exists
-    await db.run(`INSERT INTO users (companyName, email, password) VALUES (?, ?, ?)`, [companyName, email, password]);
+    await db.run(`INSERT INTO users (${TABLE_COLUMNS.join(",")}) VALUES (${TABLE_COLUMNS.map(v => "?").join(",")})`, [companyName, email, password, industry, founded, headquarters, size, specialization, perks, description]);
   } catch (error) {
     console.error("❌ Error in registerUser:", error);
     throw error; // Re-throw the error to propagate it
   }
+};
+
+const getAll = async () => {
+  const db = await connectDB();
+  return db.all(`SELECT * FROM users`);
 };
 
 const findUserByEmail = async (email) => {
@@ -29,21 +43,21 @@ const findUserByEmail = async (email) => {
 
 const getCompanyDetailsById = async (userId) => {
   const db = await connectDB();
-  return db.get(`SELECT id, companyName, email FROM users WHERE id = ?`, [userId]);
+  return db.get(`SELECT id, companyName, email, industry, founded, headquarters, size, specialization, perks, description FROM users WHERE id = ?`, [userId]);
 };
 
 // New function to get company profile by ID (for public viewing)
 const getPublicCompanyProfile = async (companyId) => {
   const db = await connectDB();
-  return db.get(`SELECT id, companyName FROM users WHERE id = ?`, [companyId]); // No email returned
+  return db.get(`SELECT id, companyName, email, industry, founded, headquarters, size, specialization, perks, description FROM users WHERE id = ?`, [companyId]); // No email returned
 };
 
-const updateCompanyProfile = async (userId, companyName, email) => {
+const updateCompanyProfile = async (userId, {companyName, email, industry, founded, headquarters, size, specialization, perks, description}) => {
   const db = await connectDB();
   try {
     await db.run(
-      `UPDATE users SET companyName = ?, email = ? WHERE id = ?`,
-      [companyName, email, userId]
+      `UPDATE users SET companyName = ?, email = ?, industry = ?, founded = ?, headquarters = ?, size = ?, specialization = ?, perks = ?, description = ? WHERE id = ?`,
+      [companyName, email, industry, founded, headquarters, size, specialization, perks, description, userId]
     );
     console.log("✅ Profile updated successfully");
   } catch (error) {
@@ -52,4 +66,4 @@ const updateCompanyProfile = async (userId, companyName, email) => {
   }
 };
 
-export { createUserTable, registerUser, findUserByEmail, getCompanyDetailsById, getPublicCompanyProfile, updateCompanyProfile };
+export { createUserTable, registerUser, findUserByEmail, getCompanyDetailsById, getPublicCompanyProfile, updateCompanyProfile, TABLE_COLUMNS, getAll};

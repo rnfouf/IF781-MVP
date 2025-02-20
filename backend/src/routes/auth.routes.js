@@ -1,7 +1,7 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { createUserTable, registerUser, findUserByEmail, getCompanyDetailsById, getPublicCompanyProfile, updateCompanyProfile } from "../models/User.js";
+import { registerUser, findUserByEmail, getCompanyDetailsById, getPublicCompanyProfile, updateCompanyProfile, getAll } from "../models/User.js";
 import dotenv from "dotenv";
 import authMiddleware from "../middleware/authMiddleware.js";
 
@@ -11,16 +11,17 @@ dotenv.config();
 const router = express.Router();
 
 router.post("/register", async (req, res) => {
-  const { companyName, email, password } = req.body;
-
-  console.log("Received registration request:", { companyName, email, password });
+  console.log("Received registration request:", req.body);
 
   try {
-    const existingUser = await findUserByEmail(email);
+    const existingUser = await findUserByEmail(req.body.email);
     if (existingUser) return res.status(400).json({ message: "Email already in use" });
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    await registerUser(companyName, email, hashedPassword);
+    const data = {...req.body}
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    data["password"] = hashedPassword
+
+    await registerUser(data);
 
     res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
@@ -47,6 +48,16 @@ router.post("/login", async (req, res) => {
   }
 });
 
+//TODO - remove, debug only
+router.get("/all", async (req, res) => {
+  try {
+    const all = await getAll();
+    res.json(all)
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+});
+
 router.get("/company-details", authMiddleware, async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -59,6 +70,13 @@ router.get("/company-details", authMiddleware, async (req, res) => {
       id: companyDetails.id,
       companyName: companyDetails.companyName,
       email: companyDetails.email, // Only visible to the owner
+      industry: companyDetails.industry,
+      founded: companyDetails.founded,
+      headquarters: companyDetails.headquarters,
+      size: companyDetails.size,
+      specialization: companyDetails.specialization,
+      perks: companyDetails.perks,
+      description: companyDetails.description,
       isOwner: true // Flag for the frontend
     });
   } catch (error) {
@@ -90,7 +108,7 @@ router.put("/update-profile", authMiddleware, async (req, res) => {
   console.log("Received update request:", { userId, companyName, email }); // Log the request data
 
   try {
-    await updateCompanyProfile(userId, companyName, email);
+    await updateCompanyProfile(userId, req.body);
     res.json({ message: "Profile updated successfully" });
   } catch (error) {
     console.error("❌ Error updating profile:", error);
