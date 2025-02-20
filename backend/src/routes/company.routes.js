@@ -3,7 +3,6 @@ import connectDB from "../config/db.js";
 
 const router = express.Router();
 
-// Get companies that have job postings
 router.get("/", async (req, res) => {
   try {
     const { search } = req.query;
@@ -12,7 +11,6 @@ router.get("/", async (req, res) => {
     let query = `
       SELECT DISTINCT users.id, users.companyName
       FROM users
-      JOIN jobs ON users.id = jobs.companyId
     `;
 
     let params = [];
