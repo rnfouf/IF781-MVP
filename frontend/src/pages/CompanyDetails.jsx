@@ -5,6 +5,7 @@ import { Button } from "@/components/ui";
 import JobPreviewUser from "@/components/JobPreviewUser";
 import Modal from "@/components/Modal";
 import Header from "@/components/Header";
+import { useParams } from "react-router-dom";
 
 export default function CompanyDetails() {
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ export default function CompanyDetails() {
   const [jobs, setJobs] = useState([]);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false); // State for Job Preview modal
   const [selectedJob, setSelectedJob] = useState(null);
+  const {companyId} = useParams()
 
   // Fetch company details on component mount
   useEffect(() => {
@@ -21,15 +23,15 @@ export default function CompanyDetails() {
       navigate("/login");
       return;
     }
-    fetchCompanyDetails();
+    fetchCompanyDetails(companyId);
   }, [navigate]);
 
-  const fetchCompanyDetails = async () => {
+  const fetchCompanyDetails = async (companyId) => {
     try {
       const token = localStorage.getItem("token");
 
       const response = await fetch(
-        "http://localhost:8080/api/auth/company-details",
+        `http://localhost:8080/api/companies/company-details/${companyId}`,
         {
           method: "GET",
           headers: { Authorization: `Bearer ${token}` },
