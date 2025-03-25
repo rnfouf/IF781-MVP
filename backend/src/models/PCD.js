@@ -13,19 +13,19 @@ const createPCDTable = async () => {
     currentCompany TEXT,
     previousExperience TEXT,
     disabilities TEXT,
+    accessibilityNeeds TEXT,
     skills TEXT,
     biography TEXT
   )`);
-  console.log("✅ PCD table created or already exists");
 };
 
-const TABLE_COLUMNS = ["fullName", "email", "password", "role", "phone", "address", "currentCompany", "previousExperience", "disabilities", "skills", "biography"]
+const TABLE_COLUMNS = ["fullName", "email", "password", "role", "phone", "address", "currentCompany", "previousExperience", "disabilities", "accessibilityNeeds", "skills", "biography"]
 
-const registerPCD = async ({fullName, email, password, role, phone, address, currentCompany, previousExperience, disabilities, skills, biography}) => {
+const registerPCD = async ({fullName, email, password, role, phone, address, currentCompany, previousExperience, disabilities, accessibilityNeeds, skills, biography}) => {
   try {
     const db = await connectDB();
     await createPCDTable(); // Ensure the table exists
-    await db.run(`INSERT INTO pcds (${TABLE_COLUMNS.join(",")}) VALUES (${TABLE_COLUMNS.map(v => "?").join(",")})`, [fullName, email, password, role, phone, address, currentCompany, previousExperience, disabilities, skills, biography]);
+    await db.run(`INSERT INTO pcds (${TABLE_COLUMNS.join(",")}) VALUES (${TABLE_COLUMNS.map(v => "?").join(",")})`, [fullName, email, password, role, phone, address, currentCompany, previousExperience, disabilities, accessibilityNeeds, skills, biography]);
   } catch (error) {
     console.error("❌ Error in registerPCD:", error);
     throw error; // Re-throw the error to propagate it
@@ -45,7 +45,7 @@ const findPCDByEmail = async (email) => {
 const getPCDDetailsById = async (userId) => {
   const db = await connectDB();
   return db.get(
-    `SELECT id, fullName, email, role, phone, address, currentCompany, previousExperience, disabilities, skills, biography 
+    `SELECT id, fullName, email, role, phone, address, currentCompany, previousExperience, disabilities, accessibilityNeeds, skills, biography 
     FROM users WHERE id = ?`, [userId]
 );
 };
@@ -53,18 +53,18 @@ const getPCDDetailsById = async (userId) => {
 const getPCDDetailsByRole = async (userRole) => {
     const db = await connectDB();
     return db.get(
-        `SELECT id, fullName, email, role, phone, address, currentCompany, previousExperience, disabilities, skills, biography 
+        `SELECT id, fullName, email, role, phone, address, currentCompany, previousExperience, disabilities, accessibilityNeeds, skills, biography 
         FROM users WHERE role = ?`, [userRole]
     );
   };
 
 
-const updatePCDProfile = async (userId, {fullName, email, password, role, phone, address, currentCompany, previousExperience, disabilities, skills, biography}) => {
+const updatePCDProfile = async (userId, {fullName, email, password, role, phone, address, currentCompany, previousExperience, disabilities, accessibilityNeeds, skills, biography}) => {
   const db = await connectDB();
   try {
     await db.run(
-      `UPDATE users SET companyName = ?, email = ?, industry = ?, founded = ?, headquarters = ?, size = ?, specialization = ?, perks = ?, description = ? WHERE id = ?`,
-      [fullName, email, password, role, phone, address, currentCompany, previousExperience, disabilities, skills, biography, userId]
+      `UPDATE users SET fullName = ?, role = ?, phone = ?, address = ?, currentCompany = ?, previousExperience = ?, disabilities = ?, accessibilityNeeds = ?, skills = ?, biography = ? WHERE id = ?`,
+      [fullName, email, role, phone, address, currentCompany, previousExperience, disabilities, accessibilityNeeds, skills, biography, userId]
     );
     console.log("✅ Profile updated successfully");
   } catch (error) {
