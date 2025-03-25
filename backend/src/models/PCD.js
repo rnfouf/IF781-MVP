@@ -34,7 +34,7 @@ const registerPCD = async ({fullName, email, password, role, phone, address, cur
 
 const getAll = async () => {
   const db = await connectDB();
-  return db.all(`SELECT * FROM users`);
+  return db.all(`SELECT * FROM pcds`);
 };
 
 const findPCDByEmail = async (email) => {
@@ -46,7 +46,7 @@ const getPCDDetailsById = async (userId) => {
   const db = await connectDB();
   return db.get(
     `SELECT id, fullName, email, role, phone, address, currentCompany, previousExperience, disabilities, accessibilityNeeds, skills, biography 
-    FROM users WHERE id = ?`, [userId]
+    FROM pcds WHERE id = ?`, [userId]
 );
 };
 
@@ -54,7 +54,7 @@ const getPCDDetailsByRole = async (userRole) => {
     const db = await connectDB();
     return db.get(
         `SELECT id, fullName, email, role, phone, address, currentCompany, previousExperience, disabilities, accessibilityNeeds, skills, biography 
-        FROM users WHERE role = ?`, [userRole]
+        FROM pcds WHERE role = ?`, [userRole]
     );
   };
 
@@ -63,7 +63,7 @@ const updatePCDProfile = async (userId, {fullName, email, password, role, phone,
   const db = await connectDB();
   try {
     await db.run(
-      `UPDATE users SET fullName = ?, role = ?, phone = ?, address = ?, currentCompany = ?, previousExperience = ?, disabilities = ?, accessibilityNeeds = ?, skills = ?, biography = ? WHERE id = ?`,
+      `UPDATE pcds SET fullName = ?, role = ?, phone = ?, address = ?, currentCompany = ?, previousExperience = ?, disabilities = ?, accessibilityNeeds = ?, skills = ?, biography = ? WHERE id = ?`,
       [fullName, email, role, phone, address, currentCompany, previousExperience, disabilities, accessibilityNeeds, skills, biography, userId]
     );
     console.log("✅ Profile updated successfully");

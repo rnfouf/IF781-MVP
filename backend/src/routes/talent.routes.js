@@ -9,7 +9,8 @@ dotenv.config();
 
 const router = express.Router();
 
-router.get("/talents/:id", authMiddleware, async (req, res) => {
+// ! COMPANY
+router.get("/applicants/:id", authMiddleware, async (req, res) => {
     try {
       if (req.user.pcd) {
         return res.status(403).json({ message: "Forbidden" });

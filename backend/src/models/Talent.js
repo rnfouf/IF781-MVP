@@ -18,7 +18,6 @@ const EXCLUDE = ["password"]
 const registerTalent = async (pcdId, companyId) => {
     try {
       const db = await connectDB();
-      await createPCDTable(); // Ensure the table exists
       await db.run(`INSERT INTO talents (${TABLE_COLUMNS.join(",")}) VALUES (${TABLE_COLUMNS.map(v => "?").join(",")})`, [pcdId, companyId]);
     } catch (error) {
       console.error("❌ Error in registerTalent:", error);
@@ -49,7 +48,6 @@ const getCompaniesByPCDId = async (pcdId) => {
 const deleteTalent = async (pcdId, companyId) => {
     try {
       const db = await connectDB();
-      await createPCDTable(); // Ensure the table exists
       await db.run(`DELETE FROM talents WHERE pcdId = ? AND companyId = ?`, [pcdId, companyId]);
     } catch (error) {
       console.error("❌ Error in deleteTalent:", error);
