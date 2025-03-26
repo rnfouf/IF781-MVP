@@ -2,10 +2,13 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./config/db.js";
+import { createTalentTable } from "./models/Talent.js"
+import { createPCDTable } from "./models/PCD.js"
 import { createUserTable } from "./models/User.js"; // Import createUserTable
 import { createJobTable } from "./models/Job.js"; // Import createJobTable
 import authRoutes from "./routes/auth.routes.js";
 import jobRoutes from "./routes/job.routes.js";
+import talentRoutes from "./routes/talent.routes.js";
 import companyRoutes from "./routes/company.routes.js"; // Import company routes
 
 dotenv.config();
@@ -20,6 +23,12 @@ const initializeDB = async () => {
 
     await createJobTable();
     console.log("✅ Jobs table created or already exists");
+
+    await createPCDTable();
+    console.log("✅ PCD table created or already exists");
+    
+    await createTalentTable();
+    console.log("✅ Talent table created or already exists");
   } catch (error) {
     console.error("❌ Error initializing database:", error);
     process.exit(1); // Exit if database initialization fails
@@ -37,8 +46,12 @@ const startServer = async () => {
     app.use(cors());
 
     console.log("Registering routes...");
+
     app.use("/api/auth", authRoutes);
     console.log("Auth routes registered at /api/auth");
+
+    app.use("/api/talents", talentRoutes);
+    console.log("Talent routes registered at /api/talents");
 
     try {
       app.use("/api/jobs", jobRoutes);

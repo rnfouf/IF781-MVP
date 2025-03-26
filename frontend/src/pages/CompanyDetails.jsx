@@ -166,6 +166,7 @@ export default function CompanyDetails() {
             <JobPreviewUser
               job={selectedJob}
               onClose={() => setIsPreviewOpen(false)}
+              pcd={company.pcd}
             />
           )}
         </Modal>
