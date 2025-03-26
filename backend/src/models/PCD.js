@@ -59,12 +59,12 @@ const getPCDDetailsByRole = async (userRole) => {
   };
 
 
-const updatePCDProfile = async (userId, {fullName, email, password, role, phone, address, currentCompany, previousExperience, disabilities, accessibilityNeeds, skills, biography}) => {
+const updatePCDProfile = async (userId, {fullName, phone, email, address, role, currentCompany, biography, previousExperience, skills, disabilities, accessibilityNeeds}) => {
   const db = await connectDB();
   try {
     await db.run(
-      `UPDATE pcds SET fullName = ?, role = ?, phone = ?, address = ?, currentCompany = ?, previousExperience = ?, disabilities = ?, accessibilityNeeds = ?, skills = ?, biography = ? WHERE id = ?`,
-      [fullName, email, role, phone, address, currentCompany, previousExperience, disabilities, accessibilityNeeds, skills, biography, userId]
+      `UPDATE pcds SET fullName = ?, phone = ?, email = ?, address = ?, role = ?, currentCompany = ?, biography = ?, previousExperience = ?, skills = ?, disabilities = ?, accessibilityNeeds = ? WHERE id = ?`,
+      [fullName, phone, email, address, role, currentCompany, biography, previousExperience, skills, disabilities, accessibilityNeeds, userId]
     );
     console.log("✅ Profile updated successfully");
   } catch (error) {

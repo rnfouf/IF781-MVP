@@ -167,6 +167,35 @@ router.get("/company-details", authMiddleware, async (req, res) => {
   }
 });
 
+
+router.get("/worker-details", authMiddleware, async (req, res) => {
+  try {
+    const workerId = req.user.userId;
+    const workerDetails = await getPCDDetailsById(workerId);
+
+    if (!workerDetails) return res.status(404).json({ message: "Worker not found" });
+
+    res.json({
+      id: workerDetails.id,
+      fullName: workerDetails.fullName,
+      email: workerDetails.email,
+      role: workerDetails.role,
+      phone: workerDetails.phone,
+      address: workerDetails.address,
+      currentCompany: workerDetails.currentCompany,
+      previousExperience: workerDetails.previousExperience,
+      disabilities: workerDetails.disabilities,
+      accessibilityNeeds: workerDetails.accessibilityNeeds,
+      skills: workerDetails.skills,
+      biography: workerDetails.biography,
+      isOwner: true // Flag for the frontend
+    });
+  } catch (error) {
+    console.error("❌ Error fetching worker details:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 // New route: Get a company's public profile by ID
 router.get("/company-profile/:id", async (req, res) => {
   try {
@@ -189,7 +218,7 @@ router.get("/pcd/profile/:id", async (req, res) => {
     const companyId = req.params.id;
     const companyProfile = await getPCDDetailsById(companyId);
 
-    if (!companyProfile) return res.status(404).json({ message: "Company not found" });
+    if (!companyProfile) return res.status(404).json({ message: "Worker not found" });
 
     // Public profile response (limited details)
     res.json(companyProfile);
@@ -229,13 +258,13 @@ router.put("/update-profile", authMiddleware, async (req, res) => {
 
 // ! Update PCD
 router.put("/pcd/update-profile", authMiddleware, async (req, res) => {
-  const { companyName, email } = req.body;
+  const { fullName, phone, email, address, role, currentCompany, biography, previousExperience, skills, disabilities, accessibilityNeeds} = req.body;
   const userId = req.user.userId;
 
-  console.log("Received update request:", { userId, companyName, email }); // Log the request data
+  console.log("Received update request:", { userId, fullName, phone, email, address, role, currentCompany, biography, previousExperience, skills, disabilities, accessibilityNeeds}); // Log the request data
 
   try {
-    await updateCompanyProfile(userId, req.body);
+    await updatePCDProfile(userId, req.body);
     res.json({ message: "Profile updated successfully" });
   } catch (error) {
     console.error("❌ Error updating profile:", error);

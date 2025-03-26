@@ -4,6 +4,7 @@ import { Button, Input} from "@/components/ui";
 import { isAuthenticated } from "@/utils/auth";
 
 export default function Login() {
+  const [userType, setUserType] = useState("company");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -15,25 +16,47 @@ export default function Login() {
     }
   }, [navigate]);
 
+  const toggleUserType = () => {
+    setUserType(prev => prev === "company" ? "worker" : "company");
+  };
+
   const handleLogin = async () => {
     setError("");
 
     try {
-      const response = await fetch("http://localhost:8080/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+      if (userType === 'company') {
+        const response = await fetch("http://localhost:8080/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password}),
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      if (!response.ok) {
-        setError("Incorrect credentials");
-        return;
+        if (!response.ok) {
+          setError("Incorrect credentials");
+          return;
+        }
+
+        localStorage.setItem("token", data.token);
+        navigate("/");
+      } else {
+        const response = await fetch("http://localhost:8080/api/auth/pcd/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password}),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          setError("Incorrect credentials");
+          return;
+        }
+
+        localStorage.setItem("token", data.token);
+        navigate("/");
       }
-
-      localStorage.setItem("token", data.token);
-      navigate("/");
     } catch (error) {
       setError("Server error, try again later");
     }
@@ -46,6 +69,29 @@ export default function Login() {
         <p className="text-gray-600 text-sm text-center mb-6">
           Enter your details below to continue.
         </p>
+
+        {/* Role Toggle */}
+        <div className="flex flex-col items-center">
+          <div className="flex items-center gap-2 mb-3">
+            <span className={`text-sm ${userType === 'company' ? 'text-blue-600' : 'text-gray-400'}`}>
+              Company
+            </span>
+            <div
+              onClick={toggleUserType}
+              className="relative w-12 h-6 bg-gray-200 rounded-full cursor-pointer transition-colors duration-200"
+              role="switch"
+              aria-checked={userType === "worker"}
+            >
+              <div
+                className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-200 
+                  ${userType === 'company' ? 'left-1' : 'left-7'}`}
+              />
+            </div>
+            <span className={`text-sm ${userType === 'worker' ? 'text-blue-600' : 'text-gray-400'}`}>
+              Worker
+            </span>
+          </div>
+        </div>
 
         {/* Email Input */}
         <div className="mb-4">
