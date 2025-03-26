@@ -12,6 +12,8 @@ import {jwtDecode} from "jwt-decode";
 
 export default function Home() {
   const navigate = useNavigate();
+  const [isTalentsOpen, setIsTalentsOpen] = useState(false);
+  const [talents, setTalents] = useState([]);
   const [user, setUser] = useState(null);
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -156,8 +158,31 @@ export default function Home() {
     fetchDetails(); // Refresh the company details
   };
 
-  const handleViewStatistics = () => {
-    console.log("View statistics button clicked");
+  const handleViewTalents = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `http://localhost:8080/api/talents/applicants/${user.id}`,
+        {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+  
+      const textResponse = await response.text();
+      console.log('Raw response:', textResponse);
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = textResponse ? JSON.parse(textResponse) : [];
+      setTalents(data);
+      setIsTalentsOpen(true);
+    } catch (error) {
+      console.error('Error fetching talents:', error);
+      setError(`Failed to load talents: ${error.message}`);
+    }
   };
 
   if (loading) return <p className="text-xl">Loading...</p>;
@@ -350,14 +375,33 @@ export default function Home() {
                   Add New Job
                 </Button>
                 <Button
-                  onClick={handleViewStatistics}
+                  onClick={handleViewTalents}
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg"
                 >
-                  View Statistics
+                  View Your Talents
                 </Button>
               </div>
             </div>
           </div>
+          <Modal isOpen={isTalentsOpen} onClose={() => setIsTalentsOpen(false)}>
+            <div className="p-6">
+              <h2 className="text-2xl font-bold mb-4">Applicants List</h2>
+              {talents.length === 0 ? (
+                <p className="text-lg">No applicants found</p>
+              ) : (
+                <ul className="space-y-2">
+                  {talents.map((talent) => (
+                    <li
+                      key={talent.id}
+                      className="p-3 bg-gray-100 rounded-lg hover:bg-gray-200"
+                    >
+                      {talent.fullName}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </Modal>
   
           {/* Modal for adding a new job */}
           <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>

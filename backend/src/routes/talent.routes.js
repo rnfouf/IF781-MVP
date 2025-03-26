@@ -11,18 +11,26 @@ const router = express.Router();
 
 // ! COMPANY
 router.get("/applicants/:id", authMiddleware, async (req, res) => {
-    try {
-      if (req.user.pcd) {
-        return res.status(403).json({ message: "Forbidden" });
-      }
-
-      const companyId = req.params.id;
-      const talents = await getTalentsByCompanyId(companyId)
-      return res.json(talents);
-    } catch (error) {
-      console.error("❌ Error fetching company talents:", error);
-      return res.status(500).json({ message: "Server error" });
+  try {
+    if (req.user.pcd) {
+      console.log(`Forbidden access attempt by PCD user ${req.user.id}`);
+      return res.status(403).json({ message: "Forbidden" });
     }
+
+    const companyId = req.params.id;
+    console.log(`Fetching talents for company ID: ${companyId}`);
+    
+    const talents = await getTalentsByCompanyId(companyId);
+    console.log('Found talents:', talents);
+    
+    return res.json(talents);
+  } catch (error) {
+    console.error("❌ Error fetching company talents:", error);
+    return res.status(500).json({ 
+      message: "Server error",
+      error: error.message 
+    });
+  }
 });
 
 // ! PCD
