@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { isAuthenticated, logout } from "@/utils/auth";
 import { Button } from "@/components/ui";
 import JobForm from "@/components/JobForm";
@@ -209,7 +209,7 @@ export default function Home() {
       const data = textResponse ? JSON.parse(textResponse) : [];
       // Handle both array and single object responses
       const talentsArray = data.length === undefined ? [data] : data;
-      setTalents(talentsArray.filter(t => t?.fullName));
+      setTalents(talentsArray.filter(t => t?.fullName)); // Add ID check
       setIsTalentsOpen(true);
     } catch (error) {
       console.error('Error fetching talents:', error);
@@ -450,10 +450,25 @@ export default function Home() {
                 <ul className="space-y-2">
                   {talents.map((talent, index) => (
                     <li
-                      key={talent.id || `talent-${index}`}
-                      className="p-3 bg-gray-100 rounded-lg hover:bg-gray-200"
+                      key={talent.pcdId || `talent-${index}`}  // Changed to pcdId
+                      className="p-3 bg-gray-100 rounded-lg hover:bg-gray-200 cursor-pointer transition-colors"
+                      onClick={() => {
+                        if (talent.pcdId) {  // Changed condition to check pcdId
+                          navigate(`/pcd/${talent.pcdId}`);
+                          setIsTalentsOpen(false);
+                        }
+                      }}
                     >
-                      {talent.fullName}
+                      <div className="flex justify-between items-center">
+                        <span className="text-lg hover:text-blue-600">
+                          {talent.fullName}
+                        </span>
+                        {talent.pcdId && (  // Changed to check pcdId
+                          <span className="text-sm text-gray-500">
+                            Click to view profile
+                          </span>
+                        )}
+                      </div>
                     </li>
                   ))}
                 </ul>

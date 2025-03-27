@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { getCompaniesByPCDId, getTalentsByCompanyId, registerTalent, deleteTalent } from "../models/Talent.js";
 import dotenv from "dotenv";
 import authMiddleware from "../middleware/authMiddleware.js";
+import { registerPCD, findPCDByEmail, getPCDDetailsById, getPCDDetailsByRole, updatePCDProfile, getAll as getAllPCD } from "../models/PCD.js"
 
 dotenv.config();
 
@@ -82,6 +83,35 @@ router.delete("/pcd/remove-application/:companyId", authMiddleware, async (req, 
       console.error("❌ Error in /pcd/remove-application route:", error);
       res.status(500).json({ message: "Server error", error });
     }
+});
+
+router.get("/pcd/:id", authMiddleware, async (req, res) => {
+  try {
+    // Change from req.user.userId to req.params.id
+    const workerId = req.params.id; // This gets the ID from the URL parameter
+    const workerDetails = await getPCDDetailsById(workerId);
+
+    if (!workerDetails) return res.status(404).json({ message: "Worker not found" });
+
+    res.json({
+      id: workerDetails.id,
+      fullName: workerDetails.fullName,
+      email: workerDetails.email,
+      role: workerDetails.role,
+      phone: workerDetails.phone,
+      address: workerDetails.address,
+      currentCompany: workerDetails.currentCompany,
+      previousExperience: workerDetails.previousExperience,
+      disabilities: workerDetails.disabilities,
+      accessibilityNeeds: workerDetails.accessibilityNeeds,
+      skills: workerDetails.skills,
+      biography: workerDetails.biography,
+      isOwner: true // Flag for the frontend
+    });
+  } catch (error) {
+    console.error("❌ Error fetching worker details:", error);
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
 export default router

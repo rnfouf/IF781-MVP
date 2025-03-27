@@ -28,11 +28,25 @@ const registerTalent = async (pcdId, companyId) => {
 const getTalentsByCompanyId = async (companyId) => {
   const db = await connectDB();
   return db.all(
-    `SELECT ${PCDColumns.filter(col => !EXCLUDE.includes(col)).join(', ')}, companyId 
-    FROM talents t INNER JOIN pcds p
-    ON p.id = t.pcdId
-    WHERE t.companyId = ?`, 
-    [companyId]);
+    `SELECT 
+      p.id AS pcdId,
+      p.fullName,
+      p.email,
+      p.role,
+      p.phone,
+      p.address,
+      p.currentCompany,
+      p.previousExperience,
+      p.disabilities,
+      p.accessibilityNeeds,
+      p.skills,
+      p.biography,
+      t.companyId
+    FROM talents t
+    INNER JOIN pcds p ON t.pcdId = p.id
+    WHERE t.companyId = ?`,
+    [companyId]
+  );
 };
 
 const getCompaniesByPCDId = async (pcdId) => {
