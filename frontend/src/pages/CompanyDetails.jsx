@@ -5,6 +5,7 @@ import { Button } from "@/components/ui";
 import JobPreviewUser from "@/components/JobPreviewUser";
 import Modal from "@/components/Modal";
 import Header from "@/components/Header";
+import { jwtDecode } from "jwt-decode";
 import { useParams } from "react-router-dom";
 
 export default function CompanyDetails() {
@@ -16,6 +17,10 @@ export default function CompanyDetails() {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false); // State for Job Preview modal
   const [selectedJob, setSelectedJob] = useState(null);
   const {companyId} = useParams()
+  const [isPCD, setIsPCD] = useState(false);
+  const [applicationStatus, setApplicationStatus] = useState(null); // 'success' or 'error'
+  const [applicationMessage, setApplicationMessage] = useState("");
+  const [isApplying, setIsApplying] = useState(false);
 
   // Fetch company details on component mount
   useEffect(() => {
@@ -25,6 +30,14 @@ export default function CompanyDetails() {
     }
     fetchCompanyDetails(companyId);
   }, [navigate]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const decoded = jwtDecode(token);
+      setIsPCD(decoded.pcd);
+    }
+  }, []);
 
   const fetchCompanyDetails = async (companyId) => {
     try {
@@ -85,6 +98,60 @@ export default function CompanyDetails() {
     setIsPreviewOpen(true);
   };
 
+  const handleApply = async () => {
+    setIsApplying(true);
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `http://localhost:8080/api/talents/pcd/apply/${companyId}`,
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+  
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Application failed");
+      }
+  
+      setApplicationStatus("success");
+      setApplicationMessage(data.message || "Application submitted successfully!");
+    } catch (error) {
+      setApplicationStatus("error");
+      setApplicationMessage(error.message);
+    } finally {
+      setIsApplying(false);
+    }
+  };
+  
+  const handleRemoveApplication = async () => {
+    setIsApplying(true);
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `http://localhost:8080/api/talents/pcd/remove-application/${companyId}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+  
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Removal failed");
+      }
+  
+      setApplicationStatus("success");
+      setApplicationMessage(data.message || "Application removed successfully!");
+    } catch (error) {
+      setApplicationStatus("error");
+      setApplicationMessage(error.message);
+    } finally {
+      setIsApplying(false);
+    }
+  };
+
   if (loading) return <p className="text-xl">Loading...</p>;
   if (error) return <p className="text-red-500 text-xl">{error}</p>;
   if (!company)
@@ -129,6 +196,38 @@ export default function CompanyDetails() {
                 <strong>Contact info:</strong> {company.email}
               </p>
             </div>
+            {isPCD && (
+            <div className="flex justify-center space-x-4 mt-6">
+              <Button
+                onClick={handleApply}
+                className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white"
+                disabled={isApplying}
+              >
+                {isApplying ? (
+                  <div className="flex items-center">
+                    <span className="mr-2">Applying...</span>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  </div>
+                ) : (
+                  "Apply to Company"
+                )}
+              </Button>
+              <Button
+                onClick={handleRemoveApplication}
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white"
+                disabled={isApplying}
+              >
+                {isApplying ? (
+                  <div className="flex items-center">
+                    <span className="mr-2">Removing...</span>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  </div>
+                ) : (
+                  "Remove Application"
+                )}
+              </Button>
+            </div>
+          )}
           </div>
 
           {/* Job Listings */}
@@ -169,6 +268,27 @@ export default function CompanyDetails() {
               pcd={company.pcd}
             />
           )}
+        </Modal>
+
+        <Modal isOpen={!!applicationStatus} onClose={() => setApplicationStatus(null)}>
+          <div className="p-6 text-center">
+            <h2 className={`text-2xl font-bold mb-4 ${
+              applicationStatus === "success" ? "text-green-600" : "text-red-600"
+            }`}>
+              {applicationStatus === "success" ? "✓ Success!" : "⚠ Error"}
+            </h2>
+            <p className="text-lg mb-6">{applicationMessage}</p>
+            <Button
+              onClick={() => setApplicationStatus(null)}
+              className={`px-6 py-2 ${
+                applicationStatus === "success" 
+                  ? "bg-green-600 hover:bg-green-700" 
+                  : "bg-red-600 hover:bg-red-700"
+              } text-white`}
+            >
+              Continue
+            </Button>
+          </div>
         </Modal>
       </div>
     </div>

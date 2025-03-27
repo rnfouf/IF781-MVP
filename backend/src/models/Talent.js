@@ -27,7 +27,7 @@ const registerTalent = async (pcdId, companyId) => {
 
 const getTalentsByCompanyId = async (companyId) => {
   const db = await connectDB();
-  return db.get(
+  return db.all(
     `SELECT ${PCDColumns.filter(col => !EXCLUDE.includes(col)).join(', ')}, companyId 
     FROM talents t INNER JOIN pcds p
     ON p.id = t.pcdId
@@ -37,7 +37,7 @@ const getTalentsByCompanyId = async (companyId) => {
 
 const getCompaniesByPCDId = async (pcdId) => {
   const db = await connectDB();
-  return db.get(
+  return db.all(
     `SELECT ${CompanyColumns.filter(col => !EXCLUDE.includes(col)).join(', ')}, pcdId 
     FROM talents t INNER JOIN users u
     ON u.id = t.companyId

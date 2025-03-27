@@ -13,23 +13,17 @@ const router = express.Router();
 router.get("/applicants/:id", authMiddleware, async (req, res) => {
   try {
     if (req.user.pcd) {
-      console.log(`Forbidden access attempt by PCD user ${req.user.id}`);
       return res.status(403).json({ message: "Forbidden" });
     }
 
     const companyId = req.params.id;
-    console.log(`Fetching talents for company ID: ${companyId}`);
-    
     const talents = await getTalentsByCompanyId(companyId);
-    console.log('Found talents:', talents);
     
-    return res.json(talents);
+    // Wrap single object in array
+    return res.json(Array.isArray(talents) ? talents : [talents]);
   } catch (error) {
     console.error("❌ Error fetching company talents:", error);
-    return res.status(500).json({ 
-      message: "Server error",
-      error: error.message 
-    });
+    return res.status(500).json({ message: "Server error" });
   }
 });
 
@@ -47,18 +41,35 @@ router.post("/pcd/apply/:companyId", authMiddleware, async (req, res) => {
 });
 
 router.get("/pcd/companies-applied/:id", authMiddleware, async (req, res) => {
-    try {
-      if (!req.user.pcd) {
-        return res.status(403).json({ message: "Forbidden" });
-      }
-
-      const pcdId = req.params.id;
-      const companies = await getCompaniesByPCDId(pcdId)
-      return res.json(companies);
-    } catch (error) {
-      console.error("❌ Error fetching pcd companies:", error);
-      return res.status(500).json({ message: "Server error" });
+  try {
+    console.log('=== START COMPANIES APPLIED ROUTE ===');
+    console.log('Authenticated user:', req.user);
+    
+    if (!req.user.pcd) {
+      console.log('Blocked non-PCD user access:', req.user.id);
+      return res.status(403).json({ message: "Forbidden" });
     }
+
+    const pcdId = req.params.id;
+    console.log('Fetching companies for PCD ID:', pcdId);
+    
+    console.log('Executing database query...');
+    const companies = await getCompaniesByPCDId(pcdId);
+    console.log('Raw DB response:', companies);
+    
+    const result = Array.isArray(companies) ? companies : [];
+    console.log('Processed response:', result);
+    
+    return res.json(result);
+  } catch (error) {
+    console.error("❌ Error fetching pcd companies:", error);
+    return res.status(500).json({ 
+      message: "Server error",
+      error: error.message 
+    });
+  } finally {
+    console.log('=== END COMPANIES APPLIED ROUTE ===');
+  }
 });
 
 router.delete("/pcd/remove-application/:companyId", authMiddleware, async (req, res) => {

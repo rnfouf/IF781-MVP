@@ -12,6 +12,8 @@ import {jwtDecode} from "jwt-decode";
 
 export default function Home() {
   const navigate = useNavigate();
+  const [isCompaniesOpen, setIsCompaniesOpen] = useState(false);
+  const [companies, setCompanies] = useState([]);
   const [isTalentsOpen, setIsTalentsOpen] = useState(false);
   const [talents, setTalents] = useState([]);
   const [user, setUser] = useState(null);
@@ -157,6 +159,34 @@ export default function Home() {
     setIsEditProfileOpen(false);
     fetchDetails(); // Refresh the company details
   };
+  
+  const handleViewCompanies = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `http://localhost:8080/api/talents/pcd/companies-applied/${user.id}`,
+        {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+  
+      const textResponse = await response.text();
+      const data = textResponse ? JSON.parse(textResponse) : [];
+      
+      // Process the response data
+      const companiesArray = Array.isArray(data) ? 
+        data.filter(c => c?.companyName) : 
+        [];
+      
+      setCompanies(companiesArray);
+      setIsCompaniesOpen(true);
+  
+    } catch (error) {
+      console.error('Error fetching companies:', error);
+      setError(`Failed to load companies: ${error.message}`);
+    }
+  };
 
   const handleViewTalents = async () => {
     try {
@@ -177,7 +207,9 @@ export default function Home() {
       }
   
       const data = textResponse ? JSON.parse(textResponse) : [];
-      setTalents(data);
+      // Handle both array and single object responses
+      const talentsArray = data.length === undefined ? [data] : data;
+      setTalents(talentsArray.filter(t => t?.fullName));
       setIsTalentsOpen(true);
     } catch (error) {
       console.error('Error fetching talents:', error);
@@ -258,6 +290,12 @@ export default function Home() {
                   >
                     Edit Profile
                   </Button>
+                  <Button
+                    onClick={handleViewCompanies}
+                    className="px-4 py-1 text-sm bg-green-600 hover:bg-green-700"
+                  >
+                    View Applied Companies
+                  </Button>
                 </div>
               </div>
             </div>
@@ -275,6 +313,26 @@ export default function Home() {
                 onClose={() => setIsEditProfileOpen(false)}
               />
             )}
+          </Modal>
+
+          <Modal isOpen={isCompaniesOpen} onClose={() => setIsCompaniesOpen(false)}>
+            <div className="p-6">
+              <h2 className="text-2xl font-bold mb-4">Companies You've Applied To</h2>
+              {companies.length === 0 ? (
+                <p className="text-lg">No companies found</p>
+              ) : (
+                <ul className="space-y-2">
+                  {companies.map((company, index) => (
+                    <li
+                      key={company.id || `company-${index}`}
+                      className="p-3 bg-gray-100 rounded-lg hover:bg-gray-200"
+                    >
+                      {company.companyName}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </Modal>
         </div>
       </div>
@@ -390,9 +448,9 @@ export default function Home() {
                 <p className="text-lg">No applicants found</p>
               ) : (
                 <ul className="space-y-2">
-                  {talents.map((talent) => (
+                  {talents.map((talent, index) => (
                     <li
-                      key={talent.id}
+                      key={talent.id || `talent-${index}`}
                       className="p-3 bg-gray-100 rounded-lg hover:bg-gray-200"
                     >
                       {talent.fullName}
